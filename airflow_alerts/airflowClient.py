@@ -17,7 +17,6 @@ class AirflowClient:
     async def start(self) -> None:
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession()
-        # já pega token ao iniciar
         await self._ensure_token()
 
     async def stop(self) -> None:
@@ -62,7 +61,6 @@ class AirflowClient:
         headers = {"Authorization": f"Bearer {self._token}"}
 
         async with self._session.request(method, url, headers=headers) as resp:
-            # se expirou / inválido, tenta 1 refresh
             if resp.status == 401:
                 self._token = await self._fetch_token()
                 headers = {"Authorization": f"Bearer {self._token}"}
