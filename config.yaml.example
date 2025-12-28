@@ -1,0 +1,8 @@
+# Airflow API Configuration
+airflow:
+  base_url: "http://localhost:8080"
+  username: "your_username"
+  password: "your_password"
+
+  # Monitoring settings
+  monitor_interval: 10  # seconds

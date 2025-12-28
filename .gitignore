@@ -208,9 +208,16 @@ __marimo__/
 
 # Airflow
 logs/
+dags/
+plugins/
+config/
 airflow.cfg
 airflow.db
 airflow-webserver.pid
 standalone_admin_password.txt
 unittests.cfg
 webserver_config.py
+docker-compose.yaml
+
+# Configuration files with credentials
+config.yaml
