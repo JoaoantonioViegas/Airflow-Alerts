@@ -1,4 +1,16 @@
+import yaml
+import os
 from airflowClient import AirflowClient
+
+def load_config(config_path: str = "../config.yaml") -> dict:
+    """
+    Load configuration from YAML file
+    """
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    full_config_path = os.path.join(script_dir, config_path)
+
+    with open(full_config_path, 'r') as f:
+        return yaml.safe_load(f)
 
 class Metadabase:
     def __init__(self):
@@ -34,31 +46,23 @@ class DagProcessor:
         self.last_heart_beat = last_heart_beat
 
 class Airflow:
-    def __init__(self):
+    def __init__(self, config_path: str = "../config.yaml"):
         self.status = "n/d"
         self.metadabase = Metadabase()
         self.triggerer = Triggerer()
         self.scheduler = Scheduler()
         self.dag_processor = DagProcessor()
-        self.airflow_client = AirflowClient()
 
-    # async def get_airflow_status(self) -> None:
-    #     try:
-    #         async with aiohttp.ClientSession() as session:
-    #             while not self._stop_event.is_set():
-    #                 print("Getting airflow status")
-    #                 async with session.get(f"{BASE_URL}/api/v2/monitor/health") as resp:
-    #                     data = await resp.json()
-    #                     self.metadabase.set_status(data.get("metadatabase").get("status"))
-    #                     self.scheduler.set_status(data.get("dag_processor").get("status"))
-    #                     self.triggerer.set_status(data.get("triggerer").get("status"))
-    #                     self.dag_processor.set_status(data.get("dag_processor").get("status"))
+        # Load configuration
+        config = load_config(config_path)
+        airflow_config = config.get('airflow', {})
 
-    #                 await asyncio.sleep(10)
-    #     except asyncio.CancelledError:
-    #         pass
-    #     finally:
-    #         print("Health checker stopped")
+        # Initialize client with credentials from config
+        self.airflow_client = AirflowClient(
+            base_url=airflow_config.get('base_url', 'http://localhost:8080'),
+            username=airflow_config.get('username', 'airflow'),
+            password=airflow_config.get('password', 'airflow')
+        )
 
 
     
